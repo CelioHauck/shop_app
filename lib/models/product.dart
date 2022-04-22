@@ -3,7 +3,7 @@ import 'dart:convert';
 class Product {
   final String id;
   final String title;
-  final String descriptionl;
+  final String description;
   final double price;
   final String imageUrl;
   bool isFavorite;
@@ -11,7 +11,7 @@ class Product {
   Product({
     required this.id,
     required this.title,
-    required this.descriptionl,
+    required this.description,
     required this.price,
     required this.imageUrl,
     this.isFavorite = false,
@@ -20,7 +20,7 @@ class Product {
   Product copyWith({
     String? id,
     String? title,
-    String? descriptionl,
+    String? description,
     double? price,
     String? imageUrl,
     bool? isFavorite,
@@ -28,7 +28,7 @@ class Product {
     return Product(
       id: id ?? this.id,
       title: title ?? this.title,
-      descriptionl: descriptionl ?? this.descriptionl,
+      description: description ?? this.description,
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
       isFavorite: isFavorite ?? this.isFavorite,
@@ -40,7 +40,7 @@ class Product {
 
     result.addAll({'id': id});
     result.addAll({'title': title});
-    result.addAll({'descriptionl': descriptionl});
+    result.addAll({'description': description});
     result.addAll({'price': price});
     result.addAll({'imageUrl': imageUrl});
     result.addAll({'isFavorite': isFavorite});
@@ -52,7 +52,7 @@ class Product {
     return Product(
       id: map['id'] ?? '',
       title: map['title'] ?? '',
-      descriptionl: map['descriptionl'] ?? '',
+      description: map['description'] ?? '',
       price: map['price']?.toDouble() ?? 0.0,
       imageUrl: map['imageUrl'] ?? '',
       isFavorite: map['isFavorite'] ?? false,
@@ -66,7 +66,7 @@ class Product {
 
   @override
   String toString() {
-    return 'Product(id: $id, title: $title, descriptionl: $descriptionl, price: $price, imageUrl: $imageUrl, isFavorite: $isFavorite)';
+    return 'Product(id: $id, title: $title, description: $description, price: $price, imageUrl: $imageUrl, isFavorite: $isFavorite)';
   }
 
   @override
@@ -76,7 +76,7 @@ class Product {
     return other is Product &&
         other.id == id &&
         other.title == title &&
-        other.descriptionl == descriptionl &&
+        other.description == description &&
         other.price == price &&
         other.imageUrl == imageUrl &&
         other.isFavorite == isFavorite;
@@ -86,7 +86,7 @@ class Product {
   int get hashCode {
     return id.hashCode ^
         title.hashCode ^
-        descriptionl.hashCode ^
+        description.hashCode ^
         price.hashCode ^
         imageUrl.hashCode ^
         isFavorite.hashCode;
