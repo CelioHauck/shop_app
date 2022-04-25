@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shop_app/models/cart_item.dart';
 
 class Cart with ChangeNotifier {
-  final Map<String, CartIem> _items = {};
+  final Map<String, CartItem> _items = {};
 
-  Map<String, CartIem>? get items {
+  Map<String, CartItem>? get items {
     return {..._items};
   }
 
@@ -12,11 +12,18 @@ class Cart with ChangeNotifier {
     return _items.length;
   }
 
+  double get totalAmount {
+    final total = _items.entries.fold<double>(0.0, (previousValue, element) {
+      return previousValue + element.value.price * element.value.quantity;
+    });
+    return total;
+  }
+
   void addItem(String productId, double price, String title) {
     if (_items.containsKey(productId)) {
       _items.update(
         productId,
-        (value) => CartIem(
+        (value) => CartItem(
           id: value.id,
           title: value.title,
           quantity: value.quantity + 1,
@@ -26,7 +33,7 @@ class Cart with ChangeNotifier {
     } else {
       _items.putIfAbsent(
         productId,
-        () => CartIem(
+        () => CartItem(
           id: UniqueKey(),
           title: title,
           quantity: 1,

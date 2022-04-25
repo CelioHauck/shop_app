@@ -2,26 +2,25 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-class CartIem {
+class CartItem {
   final UniqueKey id;
   final String title;
   final int quantity;
   final double price;
-
-  CartIem({
+  CartItem({
     required this.id,
     required this.title,
     required this.quantity,
     required this.price,
   });
 
-  CartIem copyWith({
+  CartItem copyWith({
     UniqueKey? id,
     String? title,
     int? quantity,
     double? price,
   }) {
-    return CartIem(
+    return CartItem(
       id: id ?? this.id,
       title: title ?? this.title,
       quantity: quantity ?? this.quantity,
@@ -31,14 +30,14 @@ class CartIem {
 
   @override
   String toString() {
-    return 'CartIem(id: $id, title: $title, quantity: $quantity, price: $price)';
+    return 'CartItem(id: $id, title: $title, quantity: $quantity, price: $price)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is CartIem &&
+    return other is CartItem &&
         other.id == id &&
         other.title == title &&
         other.quantity == quantity &&
