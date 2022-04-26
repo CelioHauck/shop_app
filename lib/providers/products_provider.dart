@@ -70,14 +70,26 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-    _items.add(
-      Product(
-          id: DateTime.now().toString(),
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl),
-    );
+    final hasProduct = _items.any((element) => element.id == product.id);
+    if (hasProduct) {
+      final index = _items.indexWhere((element) => element.id == product.id);
+      _items[index] = product;
+    } else {
+      _items.add(
+        Product(
+            id: DateTime.now().toString(),
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            imageUrl: product.imageUrl),
+      );
+    }
+
+    notifyListeners();
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 }
