@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
+import '../providers/products_provider.dart';
 
 class EditproductScreen extends StatefulWidget {
   const EditproductScreen({Key? key}) : super(key: key);
@@ -32,6 +34,15 @@ class _EditproductScreenState extends State<EditproductScreen> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      const urlPattern =
+          r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
+      final result = RegExp(urlPattern, caseSensitive: false).firstMatch(
+        _imageUrlController.text,
+      );
+      if (_imageUrlController.text.isEmpty || result == null) {
+        return;
+      }
+
       setState(() {});
     }
   }
@@ -55,8 +66,13 @@ class _EditproductScreenState extends State<EditproductScreen> {
     _imageUrlFocusNode.addListener(_updateImageUrl);
   }
 
-  void _saveForm() {
-    _form.currentState?.save();
+  void _saveForm(BuildContext context) {
+    final isValid = _form.currentState?.validate();
+    if (isValid != null && isValid) {
+      _form.currentState?.save();
+      Provider.of<Products>(context, listen: false).addProduct(_editProduct);
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -66,7 +82,7 @@ class _EditproductScreenState extends State<EditproductScreen> {
         title: const Text('Edit Product'),
         actions: [
           IconButton(
-            onPressed: _saveForm,
+            onPressed: () => _saveForm(context),
             icon: const Icon(Icons.save),
           ),
         ],
@@ -84,6 +100,12 @@ class _EditproductScreenState extends State<EditproductScreen> {
                   onFieldSubmitted: (value) {
                     FocusScope.of(context).requestFocus(_priceFocusNode);
                   },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please provide a value.';
+                    }
+                    return null;
+                  },
                   onSaved: (value) {
                     if (value != null) {
                       _editProduct = Product(
@@ -100,6 +122,20 @@ class _EditproductScreenState extends State<EditproductScreen> {
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
                   focusNode: _priceFocusNode,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please provide a value.';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Please provide a valid number.';
+                    }
+
+                    if (double.parse(value) <= 0) {
+                      return 'Please enter a number greater than zero.';
+                    }
+
+                    return null;
+                  },
                   onSaved: (value) {
                     if (value != null) {
                       _editProduct = Product(
@@ -120,6 +156,17 @@ class _EditproductScreenState extends State<EditproductScreen> {
                   maxLines: 3,
                   focusNode: _descriptionFocusNode,
                   textInputAction: TextInputAction.next,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please provide a value.';
+                    }
+
+                    if (value.length < 5) {
+                      return 'Should be at least 5 characteres long';
+                    }
+
+                    return null;
+                  },
                   onSaved: (value) {
                     if (value != null) {
                       _editProduct = Product(
@@ -160,6 +207,23 @@ class _EditproductScreenState extends State<EditproductScreen> {
                         textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.url,
                         focusNode: _imageUrlFocusNode,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please provide a value.';
+                          }
+
+                          const urlPattern =
+                              r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
+                          final result =
+                              RegExp(urlPattern, caseSensitive: false)
+                                  .firstMatch(value);
+
+                          if (result == null) {
+                            return 'Please enter a valid url.';
+                          }
+
+                          return null;
+                        },
                         onSaved: (value) {
                           if (value != null) {
                             _editProduct = Product(
@@ -172,7 +236,7 @@ class _EditproductScreenState extends State<EditproductScreen> {
                           }
                         },
                         onFieldSubmitted: (_) {
-                          _saveForm();
+                          _saveForm(context);
                         },
                       ),
                     ),
