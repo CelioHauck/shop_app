@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/infra/ihttp_service.dart';
+import 'package:shop_app/repository/product.repository.dart';
 
 import 'product.dart';
 
 class Products with ChangeNotifier {
+  final ProductRepository _service;
+
+  Products({required IHttpService<Product> service})
+      : _service = ProductRepository(client: service);
+
   final List<Product> _items = [
     Product(
       id: 'p1',
@@ -75,13 +82,16 @@ class Products with ChangeNotifier {
       final index = _items.indexWhere((element) => element.id == product.id);
       _items[index] = product;
     } else {
+      final newProduct = Product(
+        id: DateTime.now().toString(),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
+      _service.post(newProduct);
       _items.add(
-        Product(
-            id: DateTime.now().toString(),
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            imageUrl: product.imageUrl),
+        newProduct,
       );
     }
 
