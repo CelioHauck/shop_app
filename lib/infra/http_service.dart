@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:shop_app/infra/ihttp_service.dart';
-import 'package:http/http.dart' show Client;
+import 'package:http/http.dart' show Client, Response;
 
 const env = "flutter-project-91c38-default-rtdb.firebaseio.com";
 
@@ -26,11 +26,11 @@ class HttpService<T> implements IHttpService<T> {
   }
 
   @override
-  Future post(T entity) {
-    final result = _client.post(
+  Future<String> post(T entity) async {
+    final result = await _client.post(
       _relativePath,
       body: const JsonEncoder().convert(entity),
     );
-    return result;
+    return Future(() => result.body);
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:shop_app/providers/product.dart';
 
@@ -18,7 +20,9 @@ class ProductRepository implements IHttpService<Product> {
   }
 
   @override
-  Future post(Product entity) {
-    return _client.post(entity);
+  Future<String> post(Product entity) async {
+    final key = await _client.post(entity);
+
+    return Future(() => const JsonDecoder().convert(key)['name']);
   }
 }

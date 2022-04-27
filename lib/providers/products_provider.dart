@@ -91,10 +91,10 @@ class Products with ChangeNotifier {
         price: product.price,
         imageUrl: product.imageUrl,
       );
-      _service.post(newProduct).then((value) {
+      _service.post(newProduct).then((id) {
         _items.add(
           newProduct.copyWith(
-            id: const JsonDecoder().convert(value.body)['name'],
+            id: id,
           ),
         );
       });
