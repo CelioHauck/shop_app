@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           create: (context) => Products(
             service: HttpService<Product>(
               client: http.Client(),
-              relativePath: '/products',
+              relativePath: '/products.json',
             ),
           ),
         ),

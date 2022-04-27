@@ -23,6 +23,6 @@ class ProductRepository implements IHttpService<Product> {
   Future<String> post(Product entity) async {
     final key = await _client.post(entity);
 
-    return Future(() => const JsonDecoder().convert(key)['name']);
+    return Future.value(const JsonDecoder().convert(key)['name']);
   }
 }

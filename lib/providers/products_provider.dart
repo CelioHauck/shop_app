@@ -78,9 +78,9 @@ class Products with ChangeNotifier {
     return product.copyWith();
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     final hasProduct = _items.any((element) => element.id == product.id);
-    if (hasProduct) {
+    if (false) {
       final index = _items.indexWhere((element) => element.id == product.id);
       _items[index] = product;
     } else {
@@ -91,19 +91,15 @@ class Products with ChangeNotifier {
         price: product.price,
         imageUrl: product.imageUrl,
       );
-      _service.post(newProduct).then((id) {
+      return _service.post(newProduct).then((id) {
         _items.add(
           newProduct.copyWith(
             id: id,
           ),
         );
+        notifyListeners();
       });
-      _items.add(
-        newProduct,
-      );
     }
-
-    notifyListeners();
   }
 
   void deleteProduct(String id) {
