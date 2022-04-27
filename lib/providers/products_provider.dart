@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:shop_app/repository/product.repository.dart';
@@ -78,9 +76,9 @@ class Products with ChangeNotifier {
     return product.copyWith();
   }
 
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     final hasProduct = _items.any((element) => element.id == product.id);
-    if (false) {
+    if (hasProduct) {
       final index = _items.indexWhere((element) => element.id == product.id);
       _items[index] = product;
     } else {
@@ -91,14 +89,19 @@ class Products with ChangeNotifier {
         price: product.price,
         imageUrl: product.imageUrl,
       );
-      return _service.post(newProduct).then((id) {
+
+      try {
+        final idServer = await _service.post(newProduct);
         _items.add(
           newProduct.copyWith(
-            id: id,
+            id: idServer,
           ),
         );
         notifyListeners();
-      });
+      } catch (error) {
+        print(error);
+        rethrow;
+      }
     }
   }
 

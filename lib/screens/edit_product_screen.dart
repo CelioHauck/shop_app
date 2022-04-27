@@ -58,7 +58,6 @@ class _EditproductScreenState extends State<EditproductScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _imageUrlFocusNode.removeListener(_updateImageUrl);
 
@@ -70,7 +69,6 @@ class _EditproductScreenState extends State<EditproductScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _imageUrlFocusNode.addListener(_updateImageUrl);
   }
@@ -88,7 +86,7 @@ class _EditproductScreenState extends State<EditproductScreen> {
     }
   }
 
-  void _saveForm(BuildContext context) {
+  Future<void> _saveForm(BuildContext context) async {
     final isValid = _form.currentState?.validate();
     if (isValid != null && isValid) {
       _form.currentState?.save();
@@ -98,33 +96,30 @@ class _EditproductScreenState extends State<EditproductScreen> {
         },
       );
 
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_editProduct)
-          .catchError((error) {
-        return showDialog(
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editProduct);
+      } catch (error) {
+        await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('An error occured'),
             content: const Text('Something went wrong'),
             actions: [
               TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
+                  onPressed: () => Navigator.of(ctx).pop(),
                   child: const Text('Ok'))
             ],
           ),
         );
-      }).then(
-        (value) {
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
-          Navigator.of(context).pop();
-        },
-      );
+      } finally {
+        setState(
+          () {
+            _isLoading = false;
+          },
+        );
+        Navigator.of(context).pop();
+      }
     }
   }
 
