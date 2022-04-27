@@ -1,16 +1,15 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:shop_app/infra/ihttp_service.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 const env = "flutter-project-91c38-default-rtdb.firebaseio.com";
 
 class HttpService<T> implements IHttpService<T> {
-  final http.Client _client;
+  final Client _client;
   final Uri _relativePath;
 
-  HttpService({required http.Client client, required String relativePath})
+  HttpService({required Client client, required String relativePath})
       : _client = client,
         _relativePath = Uri.https(env, relativePath);
 
@@ -26,11 +25,13 @@ class HttpService<T> implements IHttpService<T> {
     throw UnimplementedError();
   }
 
+// N entendi o problema
   @override
-  Future<void> post(T entity) {
-    return _client.post(
+  Future<Response> post<Response>(T entity) {
+    final result = _client.post(
       _relativePath,
       body: const JsonEncoder().convert(entity),
     );
+    return result as Future<Response>;
   }
 }

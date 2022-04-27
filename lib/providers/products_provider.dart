@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:shop_app/repository/product.repository.dart';
@@ -89,7 +91,13 @@ class Products with ChangeNotifier {
         price: product.price,
         imageUrl: product.imageUrl,
       );
-      _service.post(newProduct);
+      _service.post(newProduct).then((value) {
+        _items.add(
+          newProduct.copyWith(
+            id: const JsonDecoder().convert(value.body)['name'],
+          ),
+        );
+      });
       _items.add(
         newProduct,
       );

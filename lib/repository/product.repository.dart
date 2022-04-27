@@ -1,4 +1,3 @@
-import 'package:shop_app/infra/http_service.dart';
 import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:shop_app/providers/product.dart';
 
@@ -19,7 +18,7 @@ class ProductRepository implements IHttpService<Product> {
   }
 
   @override
-  Future<void> post(Product entity) {
-    return _client.post(entity);
+  Future<Response> post<Response>(Product entity) {
+    return _client.post<Response>(entity);
   }
 }
