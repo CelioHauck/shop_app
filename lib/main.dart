@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:shop_app/infra/http_service.dart';
 import 'package:shop_app/providers/cart.dart';
@@ -33,7 +31,7 @@ class MyApp extends StatelessWidget {
           create: (context) => Products(
             service: HttpService<Product>(
               client: http.Client(),
-              relativePath: '/products.json',
+              relativePath: '/products ',
             ),
           ),
         ),
