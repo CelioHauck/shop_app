@@ -18,7 +18,7 @@ class ProductRepository implements IHttpService<Product> {
   }
 
   @override
-  Future<Response> post<Response>(Product entity) {
-    return _client.post<Response>(entity);
+  Future post(Product entity) {
+    return _client.post(entity);
   }
 }
