@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-class Product with ChangeNotifier {
+import '../models/base_model.dart';
+
+class Product with ChangeNotifier implements BaseModel {
   final String id;
   final String title;
   final String description;
@@ -42,19 +44,6 @@ class Product with ChangeNotifier {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    final result = <String, dynamic>{};
-
-    result.addAll({'id': id});
-    result.addAll({'title': title});
-    result.addAll({'description': description});
-    result.addAll({'price': price});
-    result.addAll({'imageUrl': imageUrl});
-    result.addAll({'isFavorite': isFavorite});
-
-    return result;
-  }
-
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
       id: map['id'] ?? '',
@@ -66,14 +55,29 @@ class Product with ChangeNotifier {
     );
   }
 
-  String toJson() => json.encode(toMap());
-
   factory Product.fromJson(String source) =>
       Product.fromMap(json.decode(source));
 
   @override
+  String toJson() => json.encode(toMap());
+
+  @override
   String toString() {
     return json.encode(toMap());
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+
+    result.addAll({'id': id});
+    result.addAll({'title': title});
+    result.addAll({'description': description});
+    result.addAll({'price': price});
+    result.addAll({'imageUrl': imageUrl});
+    result.addAll({'isFavorite': isFavorite});
+
+    return result;
   }
 
   @override

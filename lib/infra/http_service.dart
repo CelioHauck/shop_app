@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:http/http.dart' show Client;
+import 'package:shop_app/models/base_model.dart';
 
 const env = "flutter-project-91c38-default-rtdb.firebaseio.com";
 
-class HttpService<T> implements IHttpService<T> {
+class HttpService<T extends BaseModel> implements IHttpService<T> {
   final Client _client;
   final Uri _basicUri;
   final String _relativePath;
-  final JsonEncoder _encoder = const JsonEncoder();
 
   HttpService({required Client client, required String relativePath})
       : _client = client,
@@ -25,11 +25,11 @@ class HttpService<T> implements IHttpService<T> {
   }
 
   @override
-  Future<String> post(T entity) {
+  Future<String> post(BaseModel entity) {
     return _client
         .post(
           _basicUri,
-          body: entity.toString(),
+          body: entity.toJson(),
         )
         .then(
           (value) => value.body,
@@ -37,9 +37,9 @@ class HttpService<T> implements IHttpService<T> {
   }
 
   @override
-  Future<void> patch(id, T entity) async {
+  Future<void> patch(id, BaseModel entity) async {
     final url = _basicUri.replace(path: '$_relativePath/$id.json');
-    final response = await _client.patch(url, body: entity.toString());
+    final response = await _client.patch(url, body: entity.toJson());
 
     if (response.statusCode != 200) {
       throw ErrorDescription(response.body);
