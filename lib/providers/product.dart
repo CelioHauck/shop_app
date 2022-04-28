@@ -73,7 +73,7 @@ class Product with ChangeNotifier {
 
   @override
   String toString() {
-    return 'Product(id: $id, title: $title, description: $description, price: $price, imageUrl: $imageUrl, isFavorite: $isFavorite)';
+    return json.encode(toMap());
   }
 
   @override

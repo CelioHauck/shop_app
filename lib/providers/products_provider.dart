@@ -52,31 +52,33 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final hasProduct = _items.any((element) => element.id == product.id);
-    if (hasProduct) {
-      final index = _items.indexWhere((element) => element.id == product.id);
-      _items[index] = product;
-    } else {
-      final newProduct = Product(
-        id: DateTime.now().toString(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl,
-      );
 
-      try {
+    try {
+      if (hasProduct) {
+        final index = _items.indexWhere((element) => element.id == product.id);
+        await _service.patch(product.id, product);
+        _items[index] = product;
+      } else {
+        final newProduct = Product(
+          id: DateTime.now().toString(),
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        );
+
         final idServer = await _service.post(newProduct);
         _items.add(
           newProduct.copyWith(
             id: idServer,
           ),
         );
-        notifyListeners();
-      } catch (error) {
-        print(error);
-        rethrow;
       }
+    } catch (error) {
+      print(error);
+      rethrow;
     }
+    notifyListeners();
   }
 
   void deleteProduct(String id) {

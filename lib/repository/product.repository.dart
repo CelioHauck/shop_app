@@ -14,7 +14,8 @@ class ProductRepository {
     if (productsMap != null) {
       final products =
           productsMap.entries.fold<List<Product>>([], (previousValue, element) {
-        previousValue.add(Product.fromJson(element.value));
+        previousValue
+            .add(Product.fromMap(element.value).copyWith(id: element.key));
         return previousValue;
       });
       return products;
@@ -25,5 +26,9 @@ class ProductRepository {
   Future<String> post(Product entity) async {
     final key = await _client.post(entity);
     return Future.value(const JsonDecoder().convert(key)['name']);
+  }
+
+  Future<void> patch(String id, Product entity) async {
+    await _client.patch(id, entity);
   }
 }
