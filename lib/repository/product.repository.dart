@@ -31,4 +31,14 @@ class ProductRepository {
   Future<void> patch(String id, Product entity) async {
     await _client.patch(id, entity);
   }
+
+  Future<void> delete(String id) async {
+    await _client.delete(id);
+  }
+
+  Future<void> favoriteOrUnfavorite(String id, bool isFavorite) async {
+    final old = Product.fromMap(await _client.findById(id));
+    final newProduct = old.copyWith(isFavorite: isFavorite);
+    await _client.patch(id, newProduct);
+  }
 }

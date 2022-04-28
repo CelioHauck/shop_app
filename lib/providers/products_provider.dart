@@ -81,8 +81,13 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async {
+    await _service.delete(id);
     _items.removeWhere((element) => element.id == id);
     notifyListeners();
+  }
+
+  Future<void> toogleFavorite(String id, bool isFavorite) async {
+    await _service.favoriteOrUnfavorite(id, isFavorite);
   }
 }

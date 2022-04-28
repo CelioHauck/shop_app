@@ -25,7 +25,7 @@ class HttpService<T extends BaseModel> implements IHttpService<T> {
   }
 
   @override
-  Future<String> post(BaseModel entity) {
+  Future<String> post(T entity) {
     return _client
         .post(
           _basicUri,
@@ -37,12 +37,49 @@ class HttpService<T extends BaseModel> implements IHttpService<T> {
   }
 
   @override
-  Future<void> patch(id, BaseModel entity) async {
+  Future<void> patch(id, T entity) async {
     final url = _basicUri.replace(path: '$_relativePath/$id.json');
     final response = await _client.patch(url, body: entity.toJson());
 
     if (response.statusCode != 200) {
       throw ErrorDescription(response.body);
+    }
+  }
+
+  @override
+  Future<void> delete(id) async {
+    if (id == null) {
+      throw ErrorDescription('Informe o id');
+    }
+
+    try {
+      final url = _basicUri.replace(path: '$_relativePath/$id');
+      final response = await _client.delete(url);
+      if (response.statusCode != 200) {
+        throw ErrorDescription(response.body);
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> findById(id) async {
+    if (id == null) {
+      throw ErrorDescription('Informe o id');
+    }
+
+    try {
+      final url = _basicUri.replace(path: '$_relativePath/$id.json');
+      final response = await _client.get(url);
+      if (response.statusCode != 200) {
+        throw ErrorDescription(response.body);
+      }
+
+      final extractData = json.decode(response.body);
+      return extractData;
+    } catch (error) {
+      rethrow;
     }
   }
 }
