@@ -14,15 +14,10 @@ class HttpService<T> implements IHttpService<T> {
         _relativePath = Uri.https(env, relativePath);
 
   @override
-  Future<Iterable<T>> all() {
-    // TODO: implement all
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<T> findById(id) {
-    // TODO: implement findById
-    throw UnimplementedError();
+  Future<Map<String, dynamic>?> all() async {
+    final response = await _client.get(_relativePath);
+    final extractData = json.decode(response.body);
+    return extractData;
   }
 
   @override

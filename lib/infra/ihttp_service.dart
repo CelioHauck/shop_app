@@ -1,5 +1,4 @@
 abstract class IHttpService<T> {
-  Future<Iterable<T>> all();
-  Future<T> findById(dynamic id);
+  Future<Map<String, dynamic>?> all();
   Future<String> post(T entity);
 }
