@@ -13,8 +13,6 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
-    final orderProvider = Provider.of<Orders>(context, listen: false);
-    final scaffold = ScaffoldMessenger.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your cart!'),
@@ -45,23 +43,8 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
-                  TextButton(
-                    onPressed: () async {
-                      try {
-                        await orderProvider.addOrder(
-                          cart.items.values.toList(),
-                          cart.totalAmount,
-                        );
-                        cart.clear();
-                      } catch (_) {
-                        scaffold.showSnackBar(
-                          const SnackBar(
-                            content: Text('Ocorreu um erro'),
-                          ),
-                        );
-                      }
-                    },
-                    child: const Text('Order now!'),
+                  _OrderButton(
+                    cart: cart,
                   )
                 ],
               ),
@@ -86,6 +69,58 @@ class CartScreen extends StatelessWidget {
           ))
         ],
       ),
+    );
+  }
+}
+
+class _OrderButton extends StatefulWidget {
+  const _OrderButton({
+    Key? key,
+    required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  State<_OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<_OrderButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    final orderProvider = Provider.of<Orders>(context, listen: false);
+    final scaffold = ScaffoldMessenger.of(context);
+    return TextButton(
+      onPressed: widget.cart.totalAmount <= 0.0 || _isLoading
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              try {
+                await orderProvider.addOrder(
+                  widget.cart.items.values.toList(),
+                  widget.cart.totalAmount,
+                );
+                setState(() {
+                  _isLoading = false;
+                });
+                widget.cart.clear();
+              } catch (_) {
+                setState(() {
+                  _isLoading = false;
+                });
+                scaffold.showSnackBar(
+                  const SnackBar(
+                    content: Text('Ocorreu um erro'),
+                  ),
+                );
+              }
+            },
+      child: _isLoading
+          ? const CircularProgressIndicator()
+          : const Text('Order now!'),
     );
   }
 }

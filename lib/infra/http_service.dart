@@ -77,6 +77,7 @@ class HttpService<T extends BaseModel> implements IHttpService<T> {
     try {
       final url = _basicUri.replace(path: '$_relativePath/$id.json');
       final response = await _client.get(url);
+
       if (response.statusCode != 200) {
         throw ErrorDescription(response.body);
       }
