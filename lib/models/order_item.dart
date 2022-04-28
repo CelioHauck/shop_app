@@ -35,7 +35,7 @@ class OrderItem implements BaseModel {
 
   factory OrderItem.fromMap(Map<String, dynamic> map) {
     return OrderItem(
-      id: map['id'] ?? UniqueKey(),
+      id: UniqueKey(),
       amount: map['amount']?.toDouble() ?? 0.0,
       products:
           List<CartItem>.from(map['products']?.map((x) => CartItem.fromMap(x))),

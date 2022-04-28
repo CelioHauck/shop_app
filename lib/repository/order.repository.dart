@@ -10,4 +10,19 @@ class OrderRepository {
   Future<String> post(OrderItem order) async {
     return await _client.post(order);
   }
+
+  Future<Iterable<OrderItem>> all() async {
+    final ordersMap = await _client.all();
+    if (ordersMap != null) {
+      final orders = ordersMap.entries.fold<List<OrderItem>>(
+        [],
+        (previousValue, element) {
+          previousValue.add(OrderItem.fromMap(element.value));
+          return previousValue;
+        },
+      );
+      return orders;
+    }
+    return [];
+  }
 }

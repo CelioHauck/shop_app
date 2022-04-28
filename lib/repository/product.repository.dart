@@ -12,12 +12,14 @@ class ProductRepository {
   Future<Iterable<Product>> all() async {
     final productsMap = await _client.all();
     if (productsMap != null) {
-      final products =
-          productsMap.entries.fold<List<Product>>([], (previousValue, element) {
-        previousValue
-            .add(Product.fromMap(element.value).copyWith(id: element.key));
-        return previousValue;
-      });
+      final products = productsMap.entries.fold<List<Product>>(
+        [],
+        (previousValue, element) {
+          previousValue
+              .add(Product.fromMap(element.value).copyWith(id: element.key));
+          return previousValue;
+        },
+      );
       return products;
     }
     return [];

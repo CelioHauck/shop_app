@@ -62,7 +62,7 @@ class CartItem {
 
   factory CartItem.fromMap(Map<String, dynamic> map) {
     return CartItem(
-      id: map['id'] ?? UniqueKey(),
+      id: UniqueKey(),
       title: map['title'] ?? '',
       quantity: map['quantity']?.toInt() ?? 0,
       price: map['price']?.toDouble() ?? 0.0,

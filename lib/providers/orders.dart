@@ -14,7 +14,7 @@ class Orders with ChangeNotifier {
   final List<OrderItem> _orders = [];
 
   List<OrderItem> get orders {
-    return [..._orders];
+    return [..._orders.reversed];
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
@@ -34,5 +34,12 @@ class Orders with ChangeNotifier {
       notifyListeners();
       rethrow;
     }
+  }
+
+  Future<void> fetchOrders() async {
+    final newOrders = await _service.all();
+    _orders.clear();
+    _orders.addAll(newOrders);
+    notifyListeners();
   }
 }
