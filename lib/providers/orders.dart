@@ -32,6 +32,7 @@ class Orders with ChangeNotifier {
     } catch (e) {
       _orders.removeAt(0);
       notifyListeners();
+      rethrow;
     }
   }
 }

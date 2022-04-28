@@ -14,6 +14,7 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
     final orderProvider = Provider.of<Orders>(context, listen: false);
+    final scaffold = ScaffoldMessenger.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your cart!'),
@@ -53,7 +54,11 @@ class CartScreen extends StatelessWidget {
                         );
                         cart.clear();
                       } catch (_) {
-                        rethrow;
+                        scaffold.showSnackBar(
+                          const SnackBar(
+                            content: Text('Ocorreu um erro'),
+                          ),
+                        );
                       }
                     },
                     child: const Text('Order now!'),

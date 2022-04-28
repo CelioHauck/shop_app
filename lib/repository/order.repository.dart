@@ -7,7 +7,7 @@ class OrderRepository {
   const OrderRepository({required IHttpService<OrderItem> client})
       : _client = client;
 
-  Future<String> post(OrderItem order) {
-    return _client.post(order);
+  Future<String> post(OrderItem order) async {
+    return await _client.post(order);
   }
 }
