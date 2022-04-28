@@ -5,48 +5,37 @@ import 'package:shop_app/widgets/order_item.dart';
 
 import '../providers/orders.dart';
 
-class OrdersScreen extends StatefulWidget {
+class OrdersScreen extends StatelessWidget {
   const OrdersScreen({Key? key}) : super(key: key);
 
   static const String routeName = '/orders';
 
   @override
-  State<OrdersScreen> createState() => _OrdersScreenState();
-}
-
-class _OrdersScreenState extends State<OrdersScreen> {
-  var _isLoading = false;
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      setState(() {
-        _isLoading = true;
-      });
-      Provider.of<Orders>(context, listen: false).fetchOrders();
-      setState(() {
-        _isLoading = false;
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final ordersData = Provider.of<Orders>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Orders'),
       ),
       drawer: const AppDrawer(),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemBuilder: (context, index) {
-                return OrderItem(order: ordersData.orders[index]);
-              },
-              itemCount: ordersData.orders.length,
-            ),
+      body: FutureBuilder(
+        //TIP: Pode dar problema se for um statefulWidget que altera o estado
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return Consumer<Orders>(
+            builder: (context, value, child) {
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  return OrderItem(order: value.orders[index]);
+                },
+                itemCount: value.orders.length,
+              );
+            },
+          );
+        },
+        future: Provider.of<Orders>(context, listen: false).fetchOrders(),
+      ),
     );
   }
 }
