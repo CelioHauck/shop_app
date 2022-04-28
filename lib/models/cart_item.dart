@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class CartItem {
@@ -46,4 +48,29 @@ class CartItem {
   int get hashCode {
     return id.hashCode ^ title.hashCode ^ quantity.hashCode ^ price.hashCode;
   }
+
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+
+    result.addAll({'id': id.toString()});
+    result.addAll({'title': title});
+    result.addAll({'quantity': quantity});
+    result.addAll({'price': price});
+
+    return result;
+  }
+
+  factory CartItem.fromMap(Map<String, dynamic> map) {
+    return CartItem(
+      id: map['id'] ?? UniqueKey(),
+      title: map['title'] ?? '',
+      quantity: map['quantity']?.toInt() ?? 0,
+      price: map['price']?.toDouble() ?? 0.0,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory CartItem.fromJson(String source) =>
+      CartItem.fromMap(json.decode(source));
 }

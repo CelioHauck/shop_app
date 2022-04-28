@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_app/models/base_model.dart';
 
 import 'cart_item.dart';
 
-class OrderItem {
+class OrderItem implements BaseModel {
   final UniqueKey id;
   final double amount;
   final List<CartItem> products;
@@ -29,15 +33,42 @@ class OrderItem {
     );
   }
 
+  factory OrderItem.fromMap(Map<String, dynamic> map) {
+    return OrderItem(
+      id: map['id'] ?? UniqueKey(),
+      amount: map['amount']?.toDouble() ?? 0.0,
+      products:
+          List<CartItem>.from(map['products']?.map((x) => CartItem.fromMap(x))),
+      dateTime: DateTime.fromMillisecondsSinceEpoch(map['dateTime']),
+    );
+  }
+
+  factory OrderItem.fromJson(String source) =>
+      OrderItem.fromMap(json.decode(source));
+
+  @override
+  String toJson() => json.encode(toMap());
+
   @override
   String toString() {
     return 'OrderItem(id: $id, amount: $amount, products: $products, dateTime: $dateTime)';
   }
 
   @override
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+
+    result.addAll({'id': id.toString()});
+    result.addAll({'amount': amount});
+    result.addAll({'products': products.map((x) => x.toMap()).toList()});
+    result.addAll({'dateTime': dateTime.millisecondsSinceEpoch});
+
+    return result;
+  }
+
+  @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    final listEquals = const DeepCollectionEquality().equals;
 
     return other is OrderItem &&
         other.id == id &&

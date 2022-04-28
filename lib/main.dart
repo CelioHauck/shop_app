@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/infra/http_service.dart';
+import 'package:shop_app/models/order_item.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/orders.dart';
 import 'package:http/http.dart' as http;
@@ -39,7 +40,12 @@ class MyApp extends StatelessWidget {
           create: (context) => Cart(),
         ),
         ChangeNotifierProvider(
-          create: (context) => Orders(),
+          create: (context) => Orders(
+            service: HttpService<OrderItem>(
+              client: http.Client(),
+              relativePath: '/orders',
+            ),
+          ),
         ),
       ],
       child: MaterialApp(

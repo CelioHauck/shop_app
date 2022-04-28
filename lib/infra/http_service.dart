@@ -25,15 +25,20 @@ class HttpService<T extends BaseModel> implements IHttpService<T> {
   }
 
   @override
-  Future<String> post(T entity) {
-    return _client
-        .post(
-          _basicUri,
-          body: entity.toJson(),
-        )
-        .then(
-          (value) => value.body,
-        );
+  Future<String> post(T entity) async {
+    try {
+      final response = await _client.post(
+        _basicUri,
+        body: entity.toJson(),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw ErrorDescription(response.body);
+      }
+      return response.body;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
