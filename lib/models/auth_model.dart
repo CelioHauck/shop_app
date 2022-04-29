@@ -31,6 +31,11 @@ class AuthModel implements BaseModel {
     return _expiryDate.isAfter(DateTime.now());
   }
 
+  String? get token {
+    if (isAuth) return _token;
+    return null;
+  }
+
   @override
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};

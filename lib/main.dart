@@ -39,12 +39,21 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<AuthProvider, Products>(
           create: (context) => Products(
             service: HttpService(
               client: client,
               relativePath: '/products',
             ),
+            items: [],
+          ),
+          update: (context, auth, products) => Products(
+            service: HttpService(
+              client: client,
+              relativePath: '/products',
+              token: auth.token,
+            ),
+            items: products?.items ?? [],
           ),
         ),
         ChangeNotifierProvider(

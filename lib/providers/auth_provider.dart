@@ -13,6 +13,13 @@ class AuthProvider with ChangeNotifier {
     return _auth != null && _auth!.isAuth;
   }
 
+  String? get token {
+    if (isAuth) {
+      return _auth?.token;
+    }
+    return null;
+  }
+
   AuthProvider({required IHttpService service})
       : _service = AuthRepository(client: service);
 

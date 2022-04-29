@@ -12,14 +12,17 @@ class HttpService implements IHttpService {
   final Uri _basicUri;
   final String _relativePath;
   final String _fullPath;
+  final String? _token;
 
   HttpService({
     required Client client,
     required String relativePath,
     String? fullPath,
+    String? token,
   })  : _client = client,
         _relativePath = relativePath,
         _fullPath = fullPath ?? '',
+        _token = token,
         // _basicUri = Uri.parse('https://identitytoolkit.googleapis.com/v1');
         _basicUri = Uri.parse(
             '${fullPath ?? env}$relativePath${fullPath != null ? '' : '.json'}');
@@ -27,12 +30,19 @@ class HttpService implements IHttpService {
   //     fullPath ?? env, '$relativePath${fullPath != null ? '' : '.json'}');
 
   String get isRealtimeDatabase {
-    return _fullPath.isEmpty ? '.json' : '';
+    return _fullPath.isEmpty ? '.json$getToken' : '';
+  }
+
+  String? get getToken {
+    if (_token != null && _token!.isNotEmpty) {
+      return '?auth=$_token';
+    }
+    return null;
   }
 
   @override
   Future<Map<String, dynamic>?> all() async {
-    final response = await _client.get(_basicUri);
+    final response = await _client.get(Uri.parse('$_basicUri$getToken'));
     final extractData = json.decode(response.body);
     return extractData;
   }
@@ -62,8 +72,7 @@ class HttpService implements IHttpService {
 
   @override
   Future<void> patch<T extends BaseModel>(id, T entity) async {
-    final url =
-        _basicUri.replace(path: '$_relativePath/$id$isRealtimeDatabase');
+    final url = Uri.parse('$env/$_relativePath/$id$isRealtimeDatabase');
     final response = await _client.patch(url, body: entity.toJson());
 
     if (response.statusCode != 200) {
@@ -78,7 +87,7 @@ class HttpService implements IHttpService {
     }
 
     try {
-      final url = _basicUri.replace(path: '$_relativePath/$id');
+      final url = Uri.parse('$env$_relativePath/$id$isRealtimeDatabase');
       final response = await _client.delete(url);
       if (response.statusCode != 200) {
         throw ErrorDescription(response.body);
@@ -95,8 +104,7 @@ class HttpService implements IHttpService {
     }
 
     try {
-      final url =
-          _basicUri.replace(path: '$_relativePath/$id$isRealtimeDatabase');
+      final url = Uri.parse('$env$_relativePath/$id$isRealtimeDatabase');
       final response = await _client.get(url);
 
       if (response.statusCode != 200) {
