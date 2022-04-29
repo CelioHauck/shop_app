@@ -8,7 +8,7 @@ import '../models/order_item.dart';
 class Orders with ChangeNotifier {
   final OrderRepository _service;
 
-  Orders({required IHttpService<OrderItem> service})
+  Orders({required IHttpService service})
       : _service = OrderRepository(client: service);
 
   final List<OrderItem> _orders = [];

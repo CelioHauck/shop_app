@@ -5,17 +5,30 @@ import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:http/http.dart' show Client;
 import 'package:shop_app/models/base_model.dart';
 
-const env = "flutter-project-91c38-default-rtdb.firebaseio.com";
+const env = "https://flutter-project-91c38-default-rtdb.firebaseio.com";
 
-class HttpService<T extends BaseModel> implements IHttpService<T> {
+class HttpService implements IHttpService {
   final Client _client;
   final Uri _basicUri;
   final String _relativePath;
+  final String _fullPath;
 
-  HttpService({required Client client, required String relativePath})
-      : _client = client,
+  HttpService({
+    required Client client,
+    required String relativePath,
+    String? fullPath,
+  })  : _client = client,
         _relativePath = relativePath,
-        _basicUri = Uri.https(env, '$relativePath.json');
+        _fullPath = fullPath ?? '',
+        // _basicUri = Uri.parse('https://identitytoolkit.googleapis.com/v1');
+        _basicUri = Uri.parse(
+            '${fullPath ?? env}$relativePath${fullPath != null ? '' : '.json'}');
+  // _basicUri = Uri.parse(
+  //     fullPath ?? env, '$relativePath${fullPath != null ? '' : '.json'}');
+
+  String get isRealtimeDatabase {
+    return _fullPath.isEmpty ? '.json' : '';
+  }
 
   @override
   Future<Map<String, dynamic>?> all() async {
@@ -25,10 +38,16 @@ class HttpService<T extends BaseModel> implements IHttpService<T> {
   }
 
   @override
-  Future<String> post(T entity) async {
+  Future<String> post<T extends BaseModel>(
+    T entity, {
+    String? path,
+    Map<String, String>? headers,
+  }) async {
     try {
       final response = await _client.post(
-        _basicUri,
+        path != null && path.isNotEmpty
+            ? Uri.parse('$_basicUri$path')
+            : _basicUri,
         body: entity.toJson(),
       );
 
@@ -42,8 +61,9 @@ class HttpService<T extends BaseModel> implements IHttpService<T> {
   }
 
   @override
-  Future<void> patch(id, T entity) async {
-    final url = _basicUri.replace(path: '$_relativePath/$id.json');
+  Future<void> patch<T extends BaseModel>(id, T entity) async {
+    final url =
+        _basicUri.replace(path: '$_relativePath/$id$isRealtimeDatabase');
     final response = await _client.patch(url, body: entity.toJson());
 
     if (response.statusCode != 200) {
@@ -75,7 +95,8 @@ class HttpService<T extends BaseModel> implements IHttpService<T> {
     }
 
     try {
-      final url = _basicUri.replace(path: '$_relativePath/$id.json');
+      final url =
+          _basicUri.replace(path: '$_relativePath/$id$isRealtimeDatabase');
       final response = await _client.get(url);
 
       if (response.statusCode != 200) {

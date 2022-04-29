@@ -4,10 +4,9 @@ import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:shop_app/providers/product.dart';
 
 class ProductRepository {
-  final IHttpService<Product> _client;
+  final IHttpService _client;
 
-  const ProductRepository({required IHttpService<Product> client})
-      : _client = client;
+  const ProductRepository({required IHttpService client}) : _client = client;
 
   Future<Iterable<Product>> all() async {
     final productsMap = await _client.all();
