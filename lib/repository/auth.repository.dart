@@ -8,19 +8,23 @@ class AuthRepository {
 
   const AuthRepository({required IHttpService client}) : _client = client;
 
-  Future<void> _autenticate(
+  Future<AuthResponse> _autenticate(
       String email, String password, String urlSegment) async {
-    await _client.post(
-      AuthRequest(email: email, password: password),
+    final result = await _client.post(
+      AuthRequest(
+        email: email,
+        password: password,
+      ),
       path: '$urlSegment?key=$key',
     );
+    return AuthResponse.fromJson(result);
   }
 
-  Future<void> signup(String email, String password) async {
+  Future<AuthResponse> signup(String email, String password) async {
     return _autenticate(email, password, 'signUp');
   }
 
-  Future<void> sing(String email, String password) async {
+  Future<AuthResponse> sing(String email, String password) async {
     return _autenticate(email, password, 'signInWithPassword');
   }
 }

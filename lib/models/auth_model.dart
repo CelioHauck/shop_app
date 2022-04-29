@@ -142,3 +142,106 @@ class AuthRequest implements BaseModel {
   int get hashCode =>
       _email.hashCode ^ _password.hashCode ^ _returnSecureToken.hashCode;
 }
+
+class AuthResponse implements BaseModel {
+  final String kind;
+  final String idToken;
+  final String email;
+  final String refreshToken;
+  final String expiresIn;
+  final String localId;
+  final bool registered;
+
+  AuthResponse({
+    required this.kind,
+    required this.idToken,
+    required this.email,
+    required this.refreshToken,
+    required this.expiresIn,
+    required this.localId,
+    required this.registered,
+  });
+
+  AuthResponse copyWith({
+    String? kind,
+    String? idToken,
+    String? email,
+    String? refreshToken,
+    String? expiresIn,
+    String? localId,
+    bool? registered,
+  }) {
+    return AuthResponse(
+      kind: kind ?? this.kind,
+      idToken: idToken ?? this.idToken,
+      email: email ?? this.email,
+      refreshToken: refreshToken ?? this.refreshToken,
+      expiresIn: expiresIn ?? this.expiresIn,
+      localId: localId ?? this.localId,
+      registered: registered ?? this.registered,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+
+    result.addAll({'kind': kind});
+    result.addAll({'idToken': idToken});
+    result.addAll({'email': email});
+    result.addAll({'refreshToken': refreshToken});
+    result.addAll({'expiresIn': expiresIn});
+    result.addAll({'localId': localId});
+    result.addAll({'registered': registered});
+
+    return result;
+  }
+
+  factory AuthResponse.fromMap(Map<String, dynamic> map) {
+    return AuthResponse(
+      kind: map['kind'] ?? '',
+      idToken: map['idToken'] ?? '',
+      email: map['email'] ?? '',
+      refreshToken: map['refreshToken'] ?? '',
+      expiresIn: map['expiresIn'] ?? '',
+      localId: map['localId'] ?? '',
+      registered: map['registered'] ?? false,
+    );
+  }
+
+  @override
+  String toJson() => json.encode(toMap());
+
+  factory AuthResponse.fromJson(String source) =>
+      AuthResponse.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'AuthResponse(kind: $kind, idToken: $idToken, email: $email, refreshToken: $refreshToken, expiresIn: $expiresIn, localId: $localId, registered: $registered)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AuthResponse &&
+        other.kind == kind &&
+        other.idToken == idToken &&
+        other.email == email &&
+        other.refreshToken == refreshToken &&
+        other.expiresIn == expiresIn &&
+        other.localId == localId &&
+        other.registered == registered;
+  }
+
+  @override
+  int get hashCode {
+    return kind.hashCode ^
+        idToken.hashCode ^
+        email.hashCode ^
+        refreshToken.hashCode ^
+        expiresIn.hashCode ^
+        localId.hashCode ^
+        registered.hashCode;
+  }
+}

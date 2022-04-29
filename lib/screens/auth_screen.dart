@@ -135,6 +135,10 @@ class _AuthCardState extends State<AuthCard> {
       setState(() {
         _isLoading = false;
       });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
     }
     setState(() {
       _isLoading = false;

@@ -16,11 +16,26 @@ class AuthProvider with ChangeNotifier {
   AuthProvider({required IHttpService service})
       : _service = AuthRepository(client: service);
 
+  Future<void> _saveAuth(AuthResponse response) async {
+    _auth = AuthModel(
+      token: response.idToken,
+      expiryDate: DateTime.now().add(
+        Duration(
+          seconds: int.parse(response.expiresIn),
+        ),
+      ),
+      userId: response.localId,
+    );
+    notifyListeners();
+  }
+
   Future<void> signup(String email, String password) async {
     final response = await _service.signup(email, password);
+    await _saveAuth(response);
   }
 
   Future<void> sing(String email, String password) async {
     final response = await _service.sing(email, password);
+    await _saveAuth(response);
   }
 }
