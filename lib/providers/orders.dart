@@ -6,12 +6,14 @@ import '../models/cart_item.dart';
 import '../models/order_item.dart';
 
 class Orders with ChangeNotifier {
+  Orders({
+    required IHttpService service,
+    required List<OrderItem> orders,
+  })  : _service = OrderRepository(client: service),
+        _orders = orders;
+
+  final List<OrderItem> _orders;
   final OrderRepository _service;
-
-  Orders({required IHttpService service})
-      : _service = OrderRepository(client: service);
-
-  final List<OrderItem> _orders = [];
 
   List<OrderItem> get orders {
     return [..._orders.reversed];

@@ -7,11 +7,12 @@ import 'product.dart';
 class Products with ChangeNotifier {
   final ProductRepository _service;
 
-  Products(
-      {required IHttpService service,
-      required List<Product> items,
-      String? token})
-      : _service = ProductRepository(client: service),
+  Products({
+    required IHttpService service,
+    required List<Product> items,
+  })  : _service = ProductRepository(
+          client: service,
+        ),
         _items = items;
   // _token = token;
 

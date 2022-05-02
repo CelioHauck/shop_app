@@ -37,7 +37,7 @@ class HttpService implements IHttpService {
     if (_token != null && _token!.isNotEmpty) {
       return '?auth=$_token';
     }
-    return null;
+    return '';
   }
 
   @override
@@ -56,8 +56,8 @@ class HttpService implements IHttpService {
     try {
       final response = await _client.post(
         path != null && path.isNotEmpty
-            ? Uri.parse('$_basicUri$path')
-            : _basicUri,
+            ? Uri.parse('$_basicUri$path$getToken')
+            : Uri.parse('$_basicUri$getToken'),
         body: entity.toJson(),
       );
 

@@ -59,18 +59,26 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => Cart(),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<AuthProvider, Orders>(
           create: (context) => Orders(
+              service: HttpService(
+                client: client,
+                relativePath: '/orders',
+              ),
+              orders: []),
+          update: (context, auth, orders) => Orders(
             service: HttpService(
               client: client,
               relativePath: '/orders',
+              token: auth.token,
             ),
+            orders: orders?.orders ?? [],
           ),
         ),
       ],
       child: Consumer<AuthProvider>(
         builder: (context, auth, _) => MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Shop App',
           theme: ThemeData(
             // This is the theme of your application.
             //
