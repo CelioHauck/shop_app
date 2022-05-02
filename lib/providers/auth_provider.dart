@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop_app/models/auth_model.dart';
 import 'package:shop_app/repository/auth.repository.dart';
 
@@ -43,6 +44,8 @@ class AuthProvider with ChangeNotifier {
     );
     _autoLogout();
     notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('userData', _auth!.toJson());
   }
 
   Future<void> signup(String email, String password) async {
@@ -55,13 +58,31 @@ class AuthProvider with ChangeNotifier {
     await _saveAuth(response);
   }
 
-  void logout() {
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData = AuthModel.fromJson(prefs.getString('userData')!);
+
+    if (!extractedUserData.isAuth) {
+      return false;
+    }
+    _auth = extractedUserData.copyWith();
+    notifyListeners();
+    _autoLogout();
+    return true;
+  }
+
+  Future<void> logout() async {
     _auth = null;
     if (_authTimer != null) {
       _authTimer?.cancel();
       _authTimer = null;
     }
     notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
   }
 
   void _autoLogout() {

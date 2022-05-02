@@ -1,7 +1,7 @@
 import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:shop_app/models/auth_model.dart';
 
-const key = 'AIzaSyDmpcEjXPKkK7tOL6FHsli8WzN7iBoAX6I';
+const _key = 'AIzaSyDmpcEjXPKkK7tOL6FHsli8WzN7iBoAX6I';
 
 class AuthRepository {
   final IHttpService _client;
@@ -15,7 +15,7 @@ class AuthRepository {
         email: email,
         password: password,
       ),
-      path: '$urlSegment?key=$key',
+      path: '$urlSegment?key=$_key',
     );
     return AuthResponse.fromJson(result);
   }

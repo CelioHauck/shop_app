@@ -14,6 +14,7 @@ import 'screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
 import './providers/products_provider.dart';
 import 'screens/user_products_screen.dart';
+import 'widgets/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -114,8 +115,15 @@ class MyApp extends StatelessWidget {
                 const UserProductsScreen(),
             EditproductScreen.routeName: (context) => const EditproductScreen(),
           },
-          home:
-              auth.isAuth ? const ProductsOverviewScreen() : const AuthScreen(),
+          home: auth.isAuth
+              ? const ProductsOverviewScreen()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (context, snapshot) =>
+                      snapshot.connectionState == ConnectionState.waiting
+                          ? const SplashScreen()
+                          : const AuthScreen(),
+                ),
         ),
       ),
     );
