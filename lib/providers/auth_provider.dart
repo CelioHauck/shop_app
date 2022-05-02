@@ -20,6 +20,11 @@ class AuthProvider with ChangeNotifier {
     return null;
   }
 
+  AuthModel? get authInfo {
+    if (_auth != null) return _auth!.copyWith();
+    return null;
+  }
+
   AuthProvider({required IHttpService service})
       : _service = AuthRepository(client: service);
 

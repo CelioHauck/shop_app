@@ -1,6 +1,9 @@
+import 'package:shop_app/models/auth_model.dart';
+
 import '../models/base_model.dart';
 
 abstract class IHttpService {
+  AuthModel get auth;
   Future<Map<String, dynamic>?> all();
   Future<Map<String, dynamic>> findById(dynamic id);
   Future<String> post<T extends BaseModel>(

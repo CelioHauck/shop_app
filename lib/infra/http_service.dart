@@ -5,6 +5,8 @@ import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:http/http.dart' show Client;
 import 'package:shop_app/models/base_model.dart';
 
+import '../models/auth_model.dart';
+
 const env = "https://flutter-project-91c38-default-rtdb.firebaseio.com";
 
 class HttpService implements IHttpService {
@@ -12,17 +14,17 @@ class HttpService implements IHttpService {
   final Uri _basicUri;
   final String _relativePath;
   final String _fullPath;
-  final String? _token;
+  final AuthModel? _auth;
 
   HttpService({
     required Client client,
     required String relativePath,
     String? fullPath,
-    String? token,
+    AuthModel? auth,
   })  : _client = client,
         _relativePath = relativePath,
         _fullPath = fullPath ?? '',
-        _token = token,
+        _auth = auth,
         // _basicUri = Uri.parse('https://identitytoolkit.googleapis.com/v1');
         _basicUri = Uri.parse(
             '${fullPath ?? env}$relativePath${fullPath != null ? '' : '.json'}');
@@ -34,8 +36,8 @@ class HttpService implements IHttpService {
   }
 
   String? get getToken {
-    if (_token != null && _token!.isNotEmpty) {
-      return '?auth=$_token';
+    if (_auth != null && _auth?.token != null) {
+      return '?auth=${_auth?.token}';
     }
     return '';
   }
@@ -116,5 +118,14 @@ class HttpService implements IHttpService {
     } catch (error) {
       rethrow;
     }
+  }
+
+  @override
+  // TODO: implement auth
+  AuthModel get auth {
+    if (_auth != null) {
+      _auth!.copyWith();
+    }
+    throw ErrorDescription('n tem auth');
   }
 }

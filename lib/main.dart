@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
             service: HttpService(
               client: client,
               relativePath: '/products',
-              token: auth.token,
+              auth: auth.authInfo,
             ),
             items: products?.items ?? [],
           ),
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
             service: HttpService(
               client: client,
               relativePath: '/orders',
-              token: auth.token,
+              auth: auth.authInfo,
             ),
             orders: orders?.orders ?? [],
           ),
