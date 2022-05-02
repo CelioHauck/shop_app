@@ -11,6 +11,7 @@ class Product with ChangeNotifier implements BaseModel {
   final double price;
   final String imageUrl;
   bool isFavorite;
+  String? creatorId;
 
   Product({
     required this.id,
@@ -19,6 +20,7 @@ class Product with ChangeNotifier implements BaseModel {
     required this.price,
     required this.imageUrl,
     this.isFavorite = false,
+    this.creatorId,
   });
 
   void toggleFavoriteStatus() {
@@ -33,6 +35,7 @@ class Product with ChangeNotifier implements BaseModel {
     double? price,
     String? imageUrl,
     bool? isFavorite,
+    String? creatorId,
   }) {
     return Product(
       id: id ?? this.id,
@@ -41,6 +44,7 @@ class Product with ChangeNotifier implements BaseModel {
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
       isFavorite: isFavorite ?? this.isFavorite,
+      creatorId: creatorId ?? this.creatorId,
     );
   }
 
@@ -52,6 +56,7 @@ class Product with ChangeNotifier implements BaseModel {
       price: map['price']?.toDouble() ?? 0.0,
       imageUrl: map['imageUrl'] ?? '',
       isFavorite: map['isFavorite'] ?? false,
+      creatorId: map['creatorId'],
     );
   }
 
@@ -63,7 +68,7 @@ class Product with ChangeNotifier implements BaseModel {
 
   @override
   String toString() {
-    return json.encode(toMap());
+    return 'Product(id: $id, title: $title, description: $description, price: $price, imageUrl: $imageUrl, isFavorite: $isFavorite, creatorId: $creatorId)';
   }
 
   @override
@@ -76,6 +81,9 @@ class Product with ChangeNotifier implements BaseModel {
     result.addAll({'price': price});
     result.addAll({'imageUrl': imageUrl});
     result.addAll({'isFavorite': isFavorite});
+    if (creatorId != null) {
+      result.addAll({'creatorId': creatorId});
+    }
 
     return result;
   }
@@ -90,7 +98,8 @@ class Product with ChangeNotifier implements BaseModel {
         other.description == description &&
         other.price == price &&
         other.imageUrl == imageUrl &&
-        other.isFavorite == isFavorite;
+        other.isFavorite == isFavorite &&
+        other.creatorId == creatorId;
   }
 
   @override
@@ -100,6 +109,7 @@ class Product with ChangeNotifier implements BaseModel {
         description.hashCode ^
         price.hashCode ^
         imageUrl.hashCode ^
-        isFavorite.hashCode;
+        isFavorite.hashCode ^
+        creatorId.hashCode;
   }
 }

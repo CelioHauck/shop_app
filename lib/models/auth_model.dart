@@ -27,6 +27,10 @@ class AuthModel implements BaseModel {
     );
   }
 
+  String get id {
+    return _userId;
+  }
+
   bool get isAuth {
     return _expiryDate.isAfter(DateTime.now());
   }

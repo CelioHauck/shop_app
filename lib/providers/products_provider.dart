@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:shop_app/infra/ihttp_service.dart';
 import 'package:shop_app/repository/product.repository.dart';
 
+import '../repository/user_favorites.repository.dart';
 import 'product.dart';
 
 class Products with ChangeNotifier {
   final ProductRepository _service;
+  final UserFavoritesRepository _userFavoritesService;
 
   Products({
     required IHttpService service,
+    required IHttpService userFavoritesService,
     required List<Product> items,
   })  : _service = ProductRepository(
           client: service,
+        ),
+        _userFavoritesService = UserFavoritesRepository(
+          client: userFavoritesService,
         ),
         _items = items;
   // _token = token;
@@ -51,10 +57,12 @@ class Products with ChangeNotifier {
     return product.copyWith();
   }
 
-  Future<void> fetchProducts() async {
-    final products = await _service.all();
+  Future<void> fetchProducts([bool filterByUser = false]) async {
+    final products = await _service.all(filterByUser);
+    final allFavorites = await _userFavoritesService
+        .allFavoritesProductsForUser(products.toList());
     _items.clear();
-    _items.addAll(products);
+    _items.addAll(allFavorites);
     notifyListeners();
   }
 
@@ -67,12 +75,15 @@ class Products with ChangeNotifier {
         await _service.patch(product.id, product);
         _items[index] = product;
       } else {
-        final newProduct = Product(
+        // final newProduct = Product(
+        //   id: DateTime.now().toString(),
+        //   title: product.title,
+        //   description: product.description,
+        //   price: product.price,
+        //   imageUrl: product.imageUrl,
+        // );
+        final newProduct = product.copyWith(
           id: DateTime.now().toString(),
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
         );
 
         final idServer = await _service.post(newProduct);
@@ -96,6 +107,6 @@ class Products with ChangeNotifier {
   }
 
   Future<void> toogleFavorite(String id, bool isFavorite) async {
-    await _service.favoriteOrUnfavorite(id, isFavorite);
+    await _userFavoritesService.favoriteOrUnfavorite(id, isFavorite);
   }
 }

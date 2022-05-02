@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/base_model.dart';
@@ -12,11 +11,14 @@ class OrderItem implements BaseModel {
   final double amount;
   final List<CartItem> products;
   final DateTime dateTime;
+  String? creatorId;
+
   OrderItem({
     required this.id,
     required this.amount,
     required this.products,
     required this.dateTime,
+    this.creatorId,
   });
 
   OrderItem copyWith({
@@ -24,12 +26,14 @@ class OrderItem implements BaseModel {
     double? amount,
     List<CartItem>? products,
     DateTime? dateTime,
+    String? creatorId,
   }) {
     return OrderItem(
       id: id ?? this.id,
       amount: amount ?? this.amount,
       products: products ?? this.products,
       dateTime: dateTime ?? this.dateTime,
+      creatorId: creatorId ?? this.creatorId,
     );
   }
 
@@ -40,6 +44,7 @@ class OrderItem implements BaseModel {
       products:
           List<CartItem>.from(map['products']?.map((x) => CartItem.fromMap(x))),
       dateTime: DateTime.fromMillisecondsSinceEpoch(map['dateTime']),
+      creatorId: map['creatorId'],
     );
   }
 
@@ -62,6 +67,9 @@ class OrderItem implements BaseModel {
     result.addAll({'amount': amount});
     result.addAll({'products': products.map((x) => x.toMap()).toList()});
     result.addAll({'dateTime': dateTime.millisecondsSinceEpoch});
+    if (creatorId != null) {
+      result.addAll({'creatorId': creatorId});
+    }
 
     return result;
   }
@@ -74,7 +82,8 @@ class OrderItem implements BaseModel {
         other.id == id &&
         other.amount == amount &&
         listEquals(other.products, products) &&
-        other.dateTime == dateTime;
+        other.dateTime == dateTime &&
+        other.creatorId == creatorId;
   }
 
   @override

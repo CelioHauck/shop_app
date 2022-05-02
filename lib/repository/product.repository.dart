@@ -8,8 +8,12 @@ class ProductRepository {
 
   const ProductRepository({required IHttpService client}) : _client = client;
 
-  Future<Iterable<Product>> all() async {
-    final productsMap = await _client.all();
+  Future<Iterable<Product>> all([bool filterByUser = false]) async {
+    final productsMap = await _client.all(
+      queryParams: filterByUser
+          ? 'orderBy="creatorId"&equalTo="${_client.auth.id}"'
+          : '',
+    );
     if (productsMap != null) {
       final products = productsMap.entries.fold<List<Product>>(
         [],
@@ -25,7 +29,7 @@ class ProductRepository {
   }
 
   Future<String> post(Product entity) async {
-    final key = await _client.post(entity);
+    final key = await _client.post(entity.copyWith(creatorId: _client.auth.id));
     return Future.value(const JsonDecoder().convert(key)['name']);
   }
 
@@ -35,11 +39,5 @@ class ProductRepository {
 
   Future<void> delete(String id) async {
     await _client.delete(id);
-  }
-
-  Future<void> favoriteOrUnfavorite(String id, bool isFavorite) async {
-    final old = Product.fromMap(await _client.findById(id));
-    final newProduct = old.copyWith(isFavorite: isFavorite);
-    await _client.patch(id, newProduct);
   }
 }

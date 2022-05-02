@@ -7,11 +7,12 @@ class OrderRepository {
   const OrderRepository({required IHttpService client}) : _client = client;
 
   Future<String> post(OrderItem order) async {
-    return await _client.post(order);
+    return await _client.post(order.copyWith(creatorId: _client.auth.id));
   }
 
   Future<Iterable<OrderItem>> all() async {
-    final ordersMap = await _client.all();
+    final ordersMap = await _client.all(
+        queryParams: 'orderBy="creatorId"&equalTo="${_client.auth.id}"');
     if (ordersMap != null) {
       final orders = ordersMap.entries.fold<List<OrderItem>>(
         [],

@@ -45,12 +45,21 @@ class MyApp extends StatelessWidget {
               client: client,
               relativePath: '/products',
             ),
+            userFavoritesService: HttpService(
+              client: client,
+              relativePath: '/userFavorites',
+            ),
             items: [],
           ),
           update: (context, auth, products) => Products(
             service: HttpService(
               client: client,
               relativePath: '/products',
+              auth: auth.authInfo,
+            ),
+            userFavoritesService: HttpService(
+              client: client,
+              relativePath: '/userFavorites',
               auth: auth.authInfo,
             ),
             items: products?.items ?? [],

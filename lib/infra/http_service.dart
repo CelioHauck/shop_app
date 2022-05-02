@@ -26,8 +26,7 @@ class HttpService implements IHttpService {
         _fullPath = fullPath ?? '',
         _auth = auth,
         // _basicUri = Uri.parse('https://identitytoolkit.googleapis.com/v1');
-        _basicUri = Uri.parse(
-            '${fullPath ?? env}$relativePath${fullPath != null ? '' : '.json'}');
+        _basicUri = Uri.parse('${fullPath ?? env}$relativePath');
   // _basicUri = Uri.parse(
   //     fullPath ?? env, '$relativePath${fullPath != null ? '' : '.json'}');
 
@@ -37,14 +36,21 @@ class HttpService implements IHttpService {
 
   String? get getToken {
     if (_auth != null && _auth?.token != null) {
-      return '?auth=${_auth?.token}';
+      return '.json?auth=${_auth?.token}';
     }
     return '';
   }
 
   @override
-  Future<Map<String, dynamic>?> all() async {
-    final response = await _client.get(Uri.parse('$_basicUri$getToken'));
+  Future<Map<String, T>?> all<T>({
+    String? path,
+    String? queryParams,
+    Map<String, String>? headers,
+  }) async {
+    final url = path != null && path.isNotEmpty
+        ? Uri.parse('$_basicUri/$path/$getToken&$queryParams')
+        : Uri.parse('$_basicUri$getToken&$queryParams');
+    final response = await _client.get(url);
     final extractData = json.decode(response.body);
     return extractData;
   }
@@ -73,12 +79,46 @@ class HttpService implements IHttpService {
   }
 
   @override
-  Future<void> patch<T extends BaseModel>(id, T entity) async {
-    final url = Uri.parse('$env/$_relativePath/$id$isRealtimeDatabase');
-    final response = await _client.patch(url, body: entity.toJson());
+  Future<void> patch<T extends BaseModel>(
+    id,
+    T entity, {
+    String? path,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      final url = path != null && path.isNotEmpty
+          ? Uri.parse('$_basicUri/$path/$id$getToken')
+          : Uri.parse('$_basicUri/$id$getToken');
 
-    if (response.statusCode != 200) {
-      throw ErrorDescription(response.body);
+      final response = await _client.patch(url, body: entity.toJson());
+
+      if (response.statusCode != 200) {
+        throw ErrorDescription(response.body);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> put<T extends BaseModel>(
+    id,
+    T entity, {
+    String? path,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      final url = path != null && path.isNotEmpty
+          ? Uri.parse('$_basicUri/$path/$id$getToken')
+          : Uri.parse('$_basicUri$id$getToken');
+
+      final response = await _client.put(url, body: entity.toJson());
+
+      if (response.statusCode != 200) {
+        throw ErrorDescription(response.body);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -121,10 +161,9 @@ class HttpService implements IHttpService {
   }
 
   @override
-  // TODO: implement auth
   AuthModel get auth {
     if (_auth != null) {
-      _auth!.copyWith();
+      return _auth!.copyWith();
     }
     throw ErrorDescription('n tem auth');
   }
