@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/auth_model.dart';
 import 'package:shop_app/repository/auth.repository.dart';
@@ -6,6 +8,7 @@ import '../infra/ihttp_service.dart';
 
 class AuthProvider with ChangeNotifier {
   AuthModel? _auth;
+  Timer? _authTimer;
 
   final AuthRepository _service;
 
@@ -38,6 +41,7 @@ class AuthProvider with ChangeNotifier {
       ),
       userId: response.localId,
     );
+    _autoLogout();
     notifyListeners();
   }
 
@@ -49,5 +53,24 @@ class AuthProvider with ChangeNotifier {
   Future<void> sing(String email, String password) async {
     final response = await _service.sing(email, password);
     await _saveAuth(response);
+  }
+
+  void logout() {
+    _auth = null;
+    if (_authTimer != null) {
+      _authTimer?.cancel();
+      _authTimer = null;
+    }
+    notifyListeners();
+  }
+
+  void _autoLogout() {
+    if (_authTimer != null) {
+      _authTimer?.cancel();
+    }
+    _authTimer = Timer(
+      Duration(seconds: _auth!.timeToExpiry),
+      () => logout(),
+    );
   }
 }

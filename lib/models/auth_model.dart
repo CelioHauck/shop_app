@@ -35,6 +35,11 @@ class AuthModel implements BaseModel {
     return _expiryDate.isAfter(DateTime.now());
   }
 
+  int get timeToExpiry {
+    final time = _expiryDate.difference(DateTime.now()).inSeconds;
+    return time;
+  }
+
   String? get token {
     if (isAuth) return _token;
     return null;
