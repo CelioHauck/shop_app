@@ -38,36 +38,39 @@ class _OrderItemState extends State<OrderItem> {
             },
           ),
         ),
-        if (_expanded)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-            height: min(widget._order.products.length * 20 + 10, 100),
-            child: ListView(
-              children: [
-                ...widget._order.products
-                    .map((prod) => Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              prod.title,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '${prod.quantity}x R\$ ${prod.price}',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ))
-                    .toList(),
-              ],
-            ),
-          )
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+          height:
+              _expanded ? min(widget._order.products.length * 20 + 10, 100) : 0,
+          child: ListView(
+            children: [
+              ...widget._order.products
+                  .map(
+                    (prod) => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          prod.title,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${prod.quantity}x R\$ ${prod.price}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList(),
+            ],
+          ),
+        )
       ]),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/helpers/custom_route.dart';
 import 'package:shop_app/infra/http_service.dart';
 import 'package:shop_app/providers/auth_provider.dart';
 import 'package:shop_app/providers/cart.dart';
@@ -101,6 +102,10 @@ class MyApp extends StatelessWidget {
             // is not restarted.
             primarySwatch: Colors.purple,
             fontFamily: 'Lato',
+            pageTransitionsTheme: PageTransitionsTheme(builders: {
+              TargetPlatform.android: CustomRouteTransitionBuilder(),
+              TargetPlatform.iOS: CustomRouteTransitionBuilder(),
+            }),
             colorScheme: ColorScheme.fromSwatch().copyWith(
               primary: Colors.purple,
               secondary: Colors.deepOrange,
